@@ -926,11 +926,10 @@ async function doLogin() {
     const cred = await auth.signInWithEmailAndPassword(email, pass);
     const SUPER_ADMIN = 'buramhan9910@gmail.com';
     const isSuperAdmin = cred.user.email === SUPER_ADMIN;
-    // Superadmin: auto-write role if missing
     if (isSuperAdmin) {
-      await db.collection('users').doc(cred.user.uid).set({ role: 'admin', email: cred.user.email }, { merge: true });
+      // Superadmin — always allowed, try to write role (ignore rules errors)
+      try { await db.collection('users').doc(cred.user.uid).set({ role: 'admin', email: cred.user.email }, { merge: true }); } catch (_) {}
     } else {
-      // Check admin role for other users
       const snap = await db.collection('users').doc(cred.user.uid).get();
       if (!snap.exists || snap.data().role !== 'admin') {
         await auth.signOut();
@@ -983,8 +982,8 @@ auth.onAuthStateChanged(async user => {
     const SUPER_ADMIN = 'buramhan9910@gmail.com';
     const isSuperAdmin = user.email === SUPER_ADMIN;
     if (isSuperAdmin) {
-      // Ensure role is written in Firestore
-      await db.collection('users').doc(user.uid).set({ role: 'admin', email: user.email }, { merge: true });
+      // Superadmin — always allowed, try to write role (ignore rules errors)
+      try { await db.collection('users').doc(user.uid).set({ role: 'admin', email: user.email }, { merge: true }); } catch (_) {}
     } else {
       const snap = await db.collection('users').doc(user.uid).get();
       if (!snap.exists || snap.data().role !== 'admin') {
