@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Subscribers: anyone can subscribe, only admin can manage
+    match /subscribers/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Messages: anyone can send, only admin can manage
+    match /messages/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Appointments: logged-in users can book, only admin can manage
+    match /appointments/{id} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Articles: anyone can read, only admin can write
+    match /articles/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Users: own doc read/write, admin can manage all
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, write: if isAdmin();
+    }
+
+    function isAdmin() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+  }
+}
