@@ -1164,16 +1164,17 @@ function renderArticlesPage() {
       <div class="table-wrap">
         <table class="data-table" id="artTable">
           <thead><tr>
-            <th>Гарчиг</th><th>Ангилал</th><th>Бүлэг</th><th>Төрөл</th><th>Огноо</th><th>Үйлдэл</th>
+            <th>Гарчиг</th><th>Ангилал</th><th>Бүлэг</th><th>Төрөл</th><th>Статус</th><th>Огноо</th><th>Үйлдэл</th>
           </tr></thead>
           <tbody>
-            ${articlesData.length === 0 ? `<tr><td colspan="6"><div class="empty-state">Нийтлэл байхгүй байна</div></td></tr>` :
+            ${articlesData.length === 0 ? `<tr><td colspan="7"><div class="empty-state">Нийтлэл байхгүй байна</div></td></tr>` :
               articlesData.map(a => `
                 <tr>
                   <td>${esc(a.title || '—')}</td>
                   <td>${esc(a.category || '—')}</td>
                   <td>${esc(a.chapter || '—')}</td>
                   <td>${statusBadge(a.isPaid ? 'paid' : 'free')}</td>
+                  <td>${a.published !== false ? '<span style="color:#1a6640;font-size:12px;font-weight:600">✓ Нийтлэгдсэн</span>' : '<span style="color:#8b1a1a;font-size:12px">✗ Нуусан</span>'}${a.featured ? ' <span title="Featured">⭐</span>' : ''}</td>
                   <td>${fmtDate(a.createdAt)}</td>
                   <td class="narrow"><div class="actions-cell">
                     <button class="btn btn-secondary btn-sm" onclick="openArticleForm('${a.id}')">✏ Засах</button>
@@ -1204,9 +1205,19 @@ function openArticleForm(id) {
       <textarea id="af-content" style="min-height:160px">${esc(a?.content || '')}</textarea></div>
     <div class="form-group"><label>Унших хугацаа (мин)</label>
       <input type="number" id="af-readTime" value="${a?.readTime || ''}" min="1" /></div>
+    <div class="form-group"><label>Ковер зургийн URL <span style="font-weight:400;color:#999">(заавал биш)</span></label>
+      <input type="text" id="af-imageUrl" value="${esc(a?.imageUrl || '')}" placeholder="https://..." /></div>
     <div class="checkbox-row">
       <input type="checkbox" id="af-isPaid" ${a?.isPaid ? 'checked' : ''} />
-      <label for="af-isPaid">Төлбөртэй нийтлэл</label>
+      <label for="af-isPaid">Төлбөртэй нийтлэл (захиалагчид)</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="af-featured" ${a?.featured ? 'checked' : ''} />
+      <label for="af-featured">⭐ Hero хэсэгт онцлох (нүүр хуудас дээр томоор)</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="af-published" ${a?.published !== false ? 'checked' : ''} />
+      <label for="af-published">✓ Нийтлэгдсэн (сайтад харагдана)</label>
     </div>
   `;
 
@@ -1225,8 +1236,11 @@ async function saveArticle(id) {
     chapter:  document.getElementById('af-chapter').value.trim(),
     excerpt:  document.getElementById('af-excerpt').value.trim(),
     content:  document.getElementById('af-content').value.trim(),
-    readTime: parseInt(document.getElementById('af-readTime').value) || 0,
-    isPaid:   document.getElementById('af-isPaid').checked,
+    readTime:  parseInt(document.getElementById('af-readTime').value) || 0,
+    isPaid:    document.getElementById('af-isPaid').checked,
+    featured:  document.getElementById('af-featured').checked,
+    published: document.getElementById('af-published').checked,
+    imageUrl:  document.getElementById('af-imageUrl').value.trim(),
   };
 
   if (!data.title) { toast('Гарчиг оруулна уу.', 'error'); return; }

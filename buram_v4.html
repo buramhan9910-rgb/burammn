@@ -560,6 +560,26 @@ img{max-width:100%;display:block}
   .footer-grid{grid-template-columns:1fr}
   .footer-copy{flex-direction:column;gap:6px;text-align:center}
 }
+
+/* ─── ARTICLE MODAL ─── */
+#articleModal{display:none;position:fixed;inset:0;z-index:2000;align-items:flex-start;justify-content:center;background:rgba(20,12,5,.65);backdrop-filter:blur(4px);padding:24px 16px;overflow-y:auto}
+.art-modal-inner{position:relative;background:var(--w1);border-radius:10px;max-width:740px;width:100%;padding:52px 60px 60px;margin:0 auto}
+.art-modal-close{position:absolute;top:14px;right:14px;background:none;border:1.5px solid var(--line);font-size:16px;cursor:pointer;color:var(--ink3);width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .15s}
+.art-modal-close:hover{background:var(--w3)}
+.art-modal-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.art-modal-cat{font-family:var(--sans);font-size:11.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em}
+.art-modal-title{font-family:var(--serif);font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--ink);line-height:1.22;margin:0 0 14px}
+.art-modal-info{font-family:var(--sans);font-size:13px;color:var(--ink3);display:flex;align-items:center;gap:8px;margin-bottom:36px;flex-wrap:wrap;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.art-body p,.art-body-preview p{font-family:var(--serif);font-size:17px;line-height:1.85;color:var(--ink);margin:0 0 22px}
+.art-paywall{text-align:center;padding:56px 24px 8px;background:linear-gradient(to bottom,transparent,var(--w1) 35%);margin-top:-70px;position:relative}
+.art-paywall-inner{display:inline-flex;flex-direction:column;align-items:center;gap:12px}
+.art-paywall-inner>span{font-size:36px}
+.art-paywall-inner>p{font-family:var(--sans);font-size:15px;color:var(--ink);margin:0;font-weight:500}
+.art-pw-btn{background:var(--w5);color:#fff;border:none;border-radius:5px;padding:11px 28px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.art-pw-btn:hover{opacity:.85}
+.art-skeleton{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@media(max-width:640px){.art-modal-inner{padding:36px 22px 40px}}
 </style>
 </head>
 <body>
@@ -617,23 +637,17 @@ img{max-width:100%;display:block}
 <div class="page">
 
   <!-- HERO -->
-  <div class="hero rv">
-    <div class="hero-photo">
+  <div class="hero rv" id="heroSection">
+    <div class="hero-photo" id="heroPhoto">
       <svg class="ph-icon" viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span class="ph-label">Таны зураг энд орно</span>
     </div>
     <div class="hero-body">
-      <p class="hero-tag">Онцлох бичвэр</p>
-      <h1 class="hero-h1">Чи ганцаараа биш — нурсан амьдралаас Балид хүрсэн зам</h1>
-      <p class="hero-excerpt">Салалт, санхүүгийн хямрал, нойргүй шөнүүдийн дундаас яаж дахин боссоноо 100 хуудсанд нүцгэнээр бичсэн. Тэр нулимсны дараа гэрэл байдгийг энэ ном таньд харуулна.</p>
-      <div class="hero-meta">
-        <span>Бурмаа Батмөнх</span>
-        <span class="hero-meta-dot"></span>
-        <span>2026.04.25</span>
-        <span class="hero-meta-dot"></span>
-        <span>100 хуудас · PDF + E-pub</span>
-      </div>
-      <a href="#book" class="read-more">
+      <p class="hero-tag" id="heroTag">Онцлох бичвэр</p>
+      <h1 class="hero-h1 art-skeleton" id="heroTitle" style="min-height:40px">&#8203;</h1>
+      <p class="hero-excerpt" id="heroExcerpt"></p>
+      <div class="hero-meta" id="heroMeta"></div>
+      <a href="#" class="read-more" id="heroReadMore" onclick="return false" style="visibility:hidden">
         Цааш унших
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
@@ -649,116 +663,14 @@ img{max-width:100%;display:block}
       <!-- Card grid -->
       <div id="articles">
         <div class="sec-label"><h2>Шинэ бичвэрүүд</h2></div>
-        <div class="card-grid">
-
-          <div class="card w2 rv">
-            <div class="card-thumb">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <div class="card-body">
-              <span class="card-badge b-free">Үнэгүй</span>
-              <p class="card-cat">Намтар · Бүлэг I</p>
-              <h2 class="card-title">Тэр өглөө бүх зүйл задарсан</h2>
-              <p class="card-excerpt">Нийтийн нүдэнд хүчирхэг харагддаг сэтгүүлч байсан би — нэг өглөө гэрийн хаалгаа нээж гарахад бүх зүйл нурсан байсан. Уншиж болон сонсох боломжтой.</p>
-              <div class="card-meta"><span>34 мин унших</span><span class="card-meta-dot"></span><span>Аудио хувилбартай</span></div>
-            </div>
-          </div>
-
-          <div class="card rv">
-            <div class="card-thumb">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            </div>
-            <div class="card-body">
-              <span class="card-badge b-paid">Захиалагчид</span>
-              <p class="card-cat">Дурсамж · Бүлэг II</p>
-              <h2 class="card-title">Үл таних эмэгтэйн өдрийн тэмдэглэл</h2>
-              <p class="card-excerpt">Хана ширтэн уйлж өнгөрүүлсэн тэр шөнүүдийн тухай цувралын эхний дэвтэр...</p>
-              <div class="card-meta"><span>₮9,900</span></div>
-            </div>
-          </div>
-
-          <div class="card rv">
-            <div class="card-thumb">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-            <div class="card-body">
-              <span class="card-badge b-paid">Захиалагчид</span>
-              <p class="card-cat">Эргэлт · Бүлэг III</p>
-              <h2 class="card-title">Нэг найзын нэг үг бүх зүйлийг өөрчилсөн</h2>
-              <p class="card-excerpt">"Чи ганцаараа биш шүү" — тэр дөрвөн үг намайг аварсан тухай...</p>
-              <div class="card-meta"><span>₮9,900</span></div>
-            </div>
-          </div>
-
-          <div class="card rv">
-            <div class="card-thumb">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <div class="card-body">
-              <span class="card-badge b-new">Шинэ</span>
-              <p class="card-cat">Өнөөдөр · Бүлэг IV</p>
-              <h2 class="card-title">Балийн хөх далайн эрэг дээрх шинэ амьдрал</h2>
-              <p class="card-excerpt">Нэг жилийн өмнө зээлийн дарамтаас сандарч шөнийг өнгөрүүлж байсан хүн — өнөөдөр Балид...</p>
-              <div class="card-meta"><span>₮9,900</span></div>
-            </div>
-          </div>
-
+        <div class="card-grid" id="cardGrid">
+          <div style="padding:40px;text-align:center;color:var(--ink3);font-size:14px;grid-column:1/-1" class="art-skeleton">Ачааллаж байна...</div>
         </div>
       </div>
 
       <div class="sec-label" style="margin-top:8px"><h2>Сүүлд нийтлэгдсэн</h2></div>
-      <div class="art-list rv">
-
-        <div class="art-item">
-          <span class="art-num">01</span>
-          <div class="art-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.4"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-          <div class="art-info">
-            <p class="art-cat">Ганцаардал · Сэтгэл зүй</p>
-            <p class="art-item-title">Ганцаардал бол дутагдал биш — энэ бол дохио</p>
-            <p class="art-item-meta">2026.04.20 · 15 мин унших</p>
-          </div>
-        </div>
-
-        <div class="art-item">
-          <span class="art-num">02</span>
-          <div class="art-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.4"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-          <div class="art-info">
-            <p class="art-cat">Харилцаа · Хосууд</p>
-            <p class="art-item-title">Хосын харилцаанд яагаад дуугүй байх нь аюултай вэ</p>
-            <p class="art-item-meta">2026.04.15 · 12 мин унших</p>
-          </div>
-        </div>
-
-        <div class="art-item">
-          <span class="art-num">03</span>
-          <div class="art-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.4"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
-          <div class="art-info">
-            <p class="art-cat">Санхүү · Амьдрал</p>
-            <p class="art-item-title">Зээлийн дарамтаас гарсан арга — миний туршлага</p>
-            <p class="art-item-meta">2026.04.10 · 18 мин унших</p>
-          </div>
-        </div>
-
-        <div class="art-item">
-          <span class="art-num">04</span>
-          <div class="art-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.4"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <div class="art-info">
-            <p class="art-cat">Аялал · Бали</p>
-            <p class="art-item-title">Зайнаас ажиллах — Балид тайван амьдарч буй ганц бие ээжийн өдөр тутам</p>
-            <p class="art-item-meta">2026.04.05 · 22 мин унших</p>
-          </div>
-        </div>
-
-        <div class="art-item">
-          <span class="art-num">05</span>
-          <div class="art-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-          <div class="art-info">
-            <p class="art-cat">Бичих · Зохиол</p>
-            <p class="art-item-title">Өөрийн түүхийг яаж бичих вэ — анхлан бичигчдэд зориулсан гарын авлага</p>
-            <p class="art-item-meta">2026.03.28 · 10 мин унших</p>
-          </div>
-        </div>
-
+      <div class="art-list" id="artList">
+        <div style="padding:20px;text-align:center;color:var(--ink3);font-size:14px" class="art-skeleton">Ачааллаж байна...</div>
       </div>
 
     </main>
@@ -978,6 +890,14 @@ const obs = new IntersectionObserver(entries => {
 }, { threshold: 0.06 });
 document.querySelectorAll('.rv').forEach(el => obs.observe(el));
 </script>
+
+<!-- ══ ARTICLE READING MODAL ══ -->
+<div id="articleModal" style="display:none;position:fixed;inset:0;z-index:2000;align-items:flex-start;justify-content:center;background:rgba(20,12,5,.65);backdrop-filter:blur(4px);padding:24px 16px;overflow-y:auto">
+  <div class="art-modal-inner">
+    <button class="art-modal-close" onclick="closeArticleModal()">✕</button>
+    <div id="artModalContent"></div>
+  </div>
+</div>
 
 <!-- ══ AUTH MODAL ══ -->
 <div id="authModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(30,18,8,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center">
@@ -1257,11 +1177,174 @@ async function submitAppt() {
   btn.textContent = 'Цаг захиалах →'; btn.disabled = false;
 }
 
-// Paid content - mark cards
-document.querySelectorAll('.card').forEach(card => {
-  if (card.querySelector('.b-paid')) card.setAttribute('data-paid','true');
+// updatePaywall is called after dynamic cards render
+
+/* ═══════════════════════════════════════════════════
+   ARTICLES — dynamic loading from Firestore
+   ═══════════════════════════════════════════════════ */
+let allArticles = [];
+
+function esc2(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function fmtD(ts){
+  if(!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+
+const ARTICLE_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="#b8845a" stroke-width="1.3"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
+
+async function loadArticles() {
+  try {
+    const snap = await db.collection('articles').orderBy('createdAt','desc').get();
+    allArticles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const pub = allArticles.filter(a => a.published !== false);
+    const featured = pub.find(a => a.featured) || null;
+    const cards = pub.filter(a => !a.featured).slice(0, 4);
+    const list = pub.slice(0, 8);
+    if (featured) renderHero(featured);
+    else resetHeroDefault();
+    renderCardGrid(cards);
+    renderArtList(list);
+    updatePaywall();
+  } catch(e) {
+    console.warn('Articles load:', e);
+    resetHeroDefault();
+  }
+}
+
+function resetHeroDefault() {
+  const t = document.getElementById('heroTitle');
+  t.classList.remove('art-skeleton');
+  t.textContent = 'Чи ганцаараа биш — нурсан амьдралаас Балид хүрсэн зам';
+  document.getElementById('heroExcerpt').textContent = 'Салалт, санхүүгийн хямрал, нойргүй шөнүүдийн дундаас яаж дахин боссоноо 100 хуудсанд нүцгэнээр бичсэн.';
+  document.getElementById('heroMeta').innerHTML = '<span>Бурмаа Батмөнх</span><span class="hero-meta-dot"></span><span>2026.04.25</span>';
+  document.getElementById('heroReadMore').style.visibility = 'visible';
+  document.getElementById('heroReadMore').onclick = null;
+}
+
+function renderHero(a) {
+  const photo = document.getElementById('heroPhoto');
+  if (a.imageUrl) {
+    photo.innerHTML = `<img src="${esc2(a.imageUrl)}" alt="${esc2(a.title)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`;
+  }
+  const tag = document.getElementById('heroTag');
+  tag.textContent = a.category || 'Онцлох бичвэр';
+  const title = document.getElementById('heroTitle');
+  title.classList.remove('art-skeleton');
+  title.textContent = a.title || '';
+  document.getElementById('heroExcerpt').textContent = a.excerpt || '';
+  const meta = document.getElementById('heroMeta');
+  meta.innerHTML = `<span>Бурмаа Батмөнх</span><span class="hero-meta-dot"></span><span>${fmtD(a.createdAt)}</span>${a.readTime ? `<span class="hero-meta-dot"></span><span>${a.readTime} мин унших</span>` : ''}`;
+  const btn = document.getElementById('heroReadMore');
+  btn.style.visibility = 'visible';
+  btn.onclick = (e) => { e.preventDefault(); openArticleModal(a.id); };
+}
+
+function renderCardGrid(cards) {
+  const grid = document.getElementById('cardGrid');
+  if (!grid) return;
+  if (cards.length === 0) {
+    grid.innerHTML = `<div style="padding:48px;text-align:center;color:var(--ink3);font-size:14px;grid-column:1/-1">Удахгүй нийтлэгдэнэ...</div>`;
+    return;
+  }
+  grid.innerHTML = cards.map((a, i) => {
+    const wide = i === 0;
+    const paid = a.isPaid;
+    const badge = paid ? '<span class="card-badge b-paid">Захиалагчид</span>' : '<span class="card-badge b-free">Үнэгүй</span>';
+    const meta = paid ? `<span>Захиалагчдад нээлттэй</span>` : `<span>${a.readTime || ''}${a.readTime ? ' мин унших' : ''}</span>`;
+    const thumb = a.imageUrl
+      ? `<div class="card-thumb" style="background:url('${esc2(a.imageUrl)}') center/cover no-repeat"></div>`
+      : `<div class="card-thumb">${ARTICLE_SVG}</div>`;
+    return `<div class="card ${wide?'w2 ':''}rv" ${paid?'data-paid="true"':''} onclick="openArticleModal('${a.id}')" style="cursor:pointer">
+      ${thumb}
+      <div class="card-body">
+        ${badge}
+        <p class="card-cat">${esc2(a.category||'')}${a.chapter?' · '+esc2(a.chapter):''}</p>
+        <h2 class="card-title">${esc2(a.title||'')}</h2>
+        <p class="card-excerpt">${esc2(a.excerpt||'')}</p>
+        <div class="card-meta">${meta}</div>
+      </div>
+    </div>`;
+  }).join('');
+  // re-observe for reveal animation
+  grid.querySelectorAll('.rv').forEach(el => obs.observe(el));
+}
+
+function renderArtList(arts) {
+  const list = document.getElementById('artList');
+  if (!list) return;
+  if (arts.length === 0) {
+    list.innerHTML = `<div style="padding:24px;text-align:center;color:var(--ink3);font-size:14px">Нийтлэл байхгүй байна.</div>`;
+    return;
+  }
+  list.innerHTML = arts.map((a, i) => `
+    <div class="art-item" onclick="openArticleModal('${a.id}')" style="cursor:pointer">
+      <span class="art-num">${String(i+1).padStart(2,'0')}</span>
+      <div class="art-thumb">${ARTICLE_SVG}</div>
+      <div class="art-info">
+        <p class="art-cat">${esc2(a.category||'')}</p>
+        <p class="art-item-title">${esc2(a.title||'')}</p>
+        <p class="art-item-meta">${fmtD(a.createdAt)}${a.readTime?' · '+a.readTime+' мин унших':''}</p>
+      </div>
+    </div>`).join('');
+}
+
+/* ════════════════���═════════════════════════��════════
+   ARTICLE READING MODAL
+   ═══════════════════════════════════════════════════ */
+function openArticleModal(id) {
+  const a = allArticles.find(x => x.id === id);
+  if (!a) return;
+  const modal = document.getElementById('articleModal');
+  const content = document.getElementById('artModalContent');
+  const locked = a.isPaid && !currentUser;
+  const paras = (a.content || '').split('\n').filter(p => p.trim());
+  let bodyHtml;
+  if (locked) {
+    const preview = paras.slice(0,2).map(p=>`<p>${esc2(p)}</p>`).join('');
+    bodyHtml = `<div class="art-body-preview">${preview || '<p><em>Агуулга удахгүй нэмэгдэнэ...</em></p>'}</div>
+    <div class="art-paywall"><div class="art-paywall-inner">
+      <span>🔒</span>
+      <p>Энэ нийтлэл захиалагчдад зориулагдсан</p>
+      <button class="art-pw-btn" onclick="closeArticleModal();openAuthModal()">Нэвтрэн бүрэн уншаарай →</button>
+    </div></div>`;
+  } else {
+    bodyHtml = `<div class="art-body">${paras.length ? paras.map(p=>`<p>${esc2(p)}</p>`).join('') : '<p><em>Агуулга удахгүй нэмэгдэнэ...</em></p>'}</div>`;
+  }
+  content.innerHTML = `
+    <div class="art-modal-meta">
+      ${a.category?`<span class="art-modal-cat">${esc2(a.category)}${a.chapter?' · '+esc2(a.chapter):''}</span>`:''}
+      ${a.isPaid?'<span class="card-badge b-paid" style="margin-left:6px">Захиалагчид</span>':'<span class="card-badge b-free" style="margin-left:6px">Үнэгүй</span>'}
+    </div>
+    <h1 class="art-modal-title">${esc2(a.title||'')}</h1>
+    <div class="art-modal-info">
+      <span>Бурмаа Батмөнх</span><span class="hero-meta-dot"></span>
+      <span>${fmtD(a.createdAt)}</span>
+      ${a.readTime?`<span class="hero-meta-dot"></span><span>${a.readTime} мин унших</span>`:''}
+    </div>
+    ${bodyHtml}`;
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeArticleModal() {
+  document.getElementById('articleModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// Close modal on backdrop click
+document.getElementById('articleModal').addEventListener('click', function(e) {
+  if (e.target === this) closeArticleModal();
 });
-updatePaywall();
+
+// Close on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeArticleModal();
+});
+
+// Kick off article loading
+loadArticles();
 </script>
 </body>
 </html>
