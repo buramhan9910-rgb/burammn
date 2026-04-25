@@ -722,7 +722,10 @@
     </div>
     <div class="form-group">
       <label>Нууц үг</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+      <div style="position:relative">
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" style="padding-right:42px;width:100%;box-sizing:border-box" />
+        <button type="button" onclick="togglePass()" id="togglePassBtn" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#a07850;font-size:16px;padding:0;line-height:1">👁</button>
+      </div>
     </div>
     <button class="btn btn-primary btn-full" id="loginBtn" onclick="doLogin()">Нэвтрэх</button>
   </div>
@@ -953,6 +956,18 @@ async function doLogin() {
 document.getElementById('loginPassword').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
+
+function togglePass() {
+  const inp = document.getElementById('loginPassword');
+  const btn = document.getElementById('togglePassBtn');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁';
+  }
+}
 
 async function doLogout() {
   await auth.signOut();
