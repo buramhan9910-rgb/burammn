@@ -606,6 +606,7 @@ img{max-width:100%;display:block}
     <a class="nl" href="#training">Сургалт</a>
     <a class="nl" href="#contact">Холбоо</a>
     <a class="nl nl-cta" href="#appointment">💙 Цаг авах</a>
+    <button id="authBtn" style="margin-left:8px;flex-shrink:0;background:transparent;border:1.5px solid var(--line);border-radius:4px;padding:0 14px;height:34px;cursor:pointer;font-family:var(--sans);font-size:12px;color:var(--ink3);transition:all .15s;white-space:nowrap" onmouseover="this.style.borderColor='var(--w3)';this.style.color='var(--w4)'" onmouseout="this.style.borderColor='var(--line)';this.style.color='var(--ink3)'">Нэвтрэх</button>
     <button class="ham-btn" id="hamBtn" onclick="toggleMob()">
       <span></span><span></span><span></span>
     </button>
@@ -976,6 +977,291 @@ const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
 }, { threshold: 0.06 });
 document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+</script>
+
+<!-- ══ AUTH MODAL ══ -->
+<div id="authModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(30,18,8,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:10px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden">
+    <div style="display:flex;border-bottom:1px solid var(--line)">
+      <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:16px;background:none;border:none;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--w5);border-bottom:2px solid var(--w3)">Нэвтрэх</button>
+      <button id="tabReg" onclick="switchAuthTab('register')" style="flex:1;padding:16px;background:none;border:none;cursor:pointer;font-family:var(--sans);font-size:13.5px;color:var(--ink3);border-bottom:2px solid transparent">Бүртгүүлэх</button>
+    </div>
+    <div style="padding:24px">
+      <!-- Login -->
+      <div id="authLoginForm">
+        <div style="margin-bottom:12px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Имэйл</label><input id="aEmail" type="email" placeholder="name@example.com" style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:14px;outline:none;background:var(--bg)" onfocus="this.style.borderColor='var(--w3)'" onblur="this.style.borderColor='var(--line)'"></div>
+        <div style="margin-bottom:16px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Нууц үг</label><input id="aPwd" type="password" placeholder="••••••••" style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:14px;outline:none;background:var(--bg)" onfocus="this.style.borderColor='var(--w3)'" onblur="this.style.borderColor='var(--line)'" onkeydown="if(event.key==='Enter')doAuth('login')"></div>
+        <button onclick="doAuth('login')" style="width:100%;padding:12px;background:var(--w5);color:#fff;border:none;border-radius:6px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer">Нэвтрэх →</button>
+      </div>
+      <!-- Register -->
+      <div id="authRegForm" style="display:none">
+        <div style="margin-bottom:12px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Нэр</label><input id="aName" type="text" placeholder="Таны нэр" style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:14px;outline:none;background:var(--bg)" onfocus="this.style.borderColor='var(--w3)'" onblur="this.style.borderColor='var(--line)'"></div>
+        <div style="margin-bottom:12px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Имэйл</label><input id="aRegEmail" type="email" placeholder="name@example.com" style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:14px;outline:none;background:var(--bg)" onfocus="this.style.borderColor='var(--w3)'" onblur="this.style.borderColor='var(--line)'"></div>
+        <div style="margin-bottom:16px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Нууц үг</label><input id="aRegPwd" type="password" placeholder="••••••••" style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:14px;outline:none;background:var(--bg)" onfocus="this.style.borderColor='var(--w3)'" onblur="this.style.borderColor='var(--line)'" onkeydown="if(event.key==='Enter')doAuth('register')"></div>
+        <button onclick="doAuth('register')" style="width:100%;padding:12px;background:var(--w5);color:#fff;border:none;border-radius:6px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer">Бүртгүүлэх →</button>
+      </div>
+      <p id="authErr" style="font-size:12.5px;color:#c0392b;margin-top:10px;min-height:18px"></p>
+      <button onclick="closeAuthModal()" style="width:100%;margin-top:8px;padding:10px;background:none;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:13px;cursor:pointer;color:var(--ink3)">Хаах</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APPOINTMENT MODAL ══ -->
+<div id="apptModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(30,18,8,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:10px;width:460px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+    <div style="padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+      <h3 style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--w5)">Цаг захиалах 💙</h3>
+      <button onclick="closeApptModal()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--ink3);line-height:1">✕</button>
+    </div>
+    <div style="padding:20px 24px">
+      <div style="margin-bottom:12px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;font-weight:600">Нэр</label><input id="apptName" type="text" placeholder="Таны нэр..." style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:13.5px;outline:none;background:var(--bg)" onfocus="this.style.borderColor='var(--w3)'" onblur="this.style.borderColor='var(--line)'"></div>
+      <div style="margin-bottom:12px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;font-weight:600">Имэйл</label><input id="apptEmail" type="email" placeholder="name@example.com" style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:13.5px;outline:none;background:var(--bg)" onfocus="this.style.borderColor='var(--w3)'" onblur="this.style.borderColor='var(--line)'"></div>
+      <div style="margin-bottom:12px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;font-weight:600">Утасны дугаар</label><input id="apptPhone" type="tel" placeholder="+976 xxxxxxxx" style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:13.5px;outline:none;background:var(--bg)" onfocus="this.style.borderColor='var(--w3)'" onblur="this.style.borderColor='var(--line)'"></div>
+      <div style="margin-bottom:12px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;font-weight:600">Ярилцах сэдэв</label><select id="apptType" style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:13.5px;outline:none;background:var(--bg);appearance:none;cursor:pointer"><option>Ганцаардал · Сэтгэл зүй</option><option>Харилцаа · Гэр бүл</option><option>Санхүү · Амьдрал</option><option>Зүгээр л ярих</option></select></div>
+      <div style="margin-bottom:14px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;font-weight:600">Цагийн урт</label>
+        <div style="display:flex;gap:8px">
+          <button class="dur-btn" data-dur="30 минут" data-price="₮25,000" onclick="selectDur(this)" style="flex:1;padding:10px 6px;border:1.5px solid var(--w3);border-radius:6px;background:var(--w1);cursor:pointer;font-family:var(--sans);font-size:12.5px;text-align:center;transition:all .15s">30 мин<br><strong style="color:var(--w4)">₮25,000</strong></button>
+          <button class="dur-btn" data-dur="60 минут" data-price="₮45,000" onclick="selectDur(this)" style="flex:1;padding:10px 6px;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer;font-family:var(--sans);font-size:12.5px;text-align:center;transition:all .15s">60 мин<br><strong style="color:var(--w4)">₮45,000</strong></button>
+          <button class="dur-btn" data-dur="Сарын дэмжлэг" data-price="₮150,000" onclick="selectDur(this)" style="flex:1;padding:10px 6px;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer;font-family:var(--sans);font-size:12.5px;text-align:center;transition:all .15s">Сарын<br><strong style="color:var(--w4)">₮150,000</strong></button>
+        </div>
+      </div>
+      <div style="margin-bottom:18px"><label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;font-weight:600">Нэмэлт мессеж (заавал биш)</label><textarea id="apptMsg" placeholder="Юу ярилцмаар байна..." style="width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:6px;font-family:var(--sans);font-size:13.5px;outline:none;background:var(--bg);height:80px;resize:none" onfocus="this.style.borderColor='var(--w3)'" onblur="this.style.borderColor='var(--line)'"></textarea></div>
+      <button id="apptSubmitBtn" onclick="submitAppt()" style="width:100%;padding:13px;background:var(--w4);color:#fff;border:none;border-radius:6px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s">Цаг захиалах →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toastWrap" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none"></div>
+
+<!-- ══ FIREBASE ══ -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
+<script>
+// ── Init ──
+const firebaseConfig = {
+  apiKey: "AIzaSyDsybsYv4YT-7v1_HVmaeruinjY_dAKQJM",
+  authDomain: "burammn-7389c.firebaseapp.com",
+  projectId: "burammn-7389c",
+  storageBucket: "burammn-7389c.firebasestorage.app",
+  messagingSenderId: "803561902606",
+  appId: "1:803561902606:web:ec320cc70107cf5488e25f",
+  measurementId: "G-9W14FZJ5J6"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+firebase.analytics();
+
+// ── Toast ──
+function toast(msg, type='') {
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  const bg = type==='success' ? '#27ae60' : type==='error' ? '#c0392b' : '#1e1208';
+  el.style.cssText = `background:${bg};color:#fff;padding:12px 18px;border-radius:6px;font-family:var(--sans);font-size:13.5px;box-shadow:0 4px 16px rgba(0,0,0,.25);pointer-events:auto;min-width:220px`;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ── Auth state ──
+let currentUser = null;
+let selectedDur = '30 минут', selectedPrice = '₮25,000';
+
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  const btn = document.getElementById('authBtn');
+  if (user) {
+    btn.textContent = '👤 ' + (user.displayName || user.email.split('@')[0]);
+  } else {
+    btn.textContent = 'Нэвтрэх';
+  }
+  updatePaywall();
+});
+
+document.getElementById('authBtn').addEventListener('click', () => {
+  if (currentUser) {
+    if (confirm('Гарах уу?')) auth.signOut().then(() => toast('Гарлаа.'));
+  } else {
+    openAuthModal();
+  }
+});
+
+// ── Paywall ──
+function updatePaywall() {
+  document.querySelectorAll('.card[data-paid]').forEach(card => {
+    const locked = !currentUser;
+    let overlay = card.querySelector('.pw-overlay');
+    if (locked) {
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'pw-overlay';
+        overlay.style.cssText = 'position:absolute;inset:0;background:rgba(250,246,241,.88);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:10;border-radius:inherit;cursor:pointer';
+        overlay.innerHTML = '<span style="font-size:20px">🔒</span><span style="font-size:12px;font-weight:600;color:var(--w5)">Нэвтэрч уншаарай</span>';
+        overlay.addEventListener('click', openAuthModal);
+        card.style.position = 'relative';
+        card.appendChild(overlay);
+      }
+    } else {
+      overlay?.remove();
+    }
+  });
+}
+
+// ── Auth Modal ──
+function openAuthModal() {
+  document.getElementById('authModal').style.display = 'flex';
+}
+function closeAuthModal() {
+  document.getElementById('authModal').style.display = 'none';
+  document.getElementById('authErr').textContent = '';
+}
+document.getElementById('authModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('authModal')) closeAuthModal();
+});
+
+function switchAuthTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('authLoginForm').style.display = isLogin ? '' : 'none';
+  document.getElementById('authRegForm').style.display  = isLogin ? 'none' : '';
+  document.getElementById('tabLogin').style.cssText = `flex:1;padding:16px;background:none;border:none;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;color:${isLogin?'var(--w5)':'var(--ink3)'};border-bottom:2px solid ${isLogin?'var(--w3)':'transparent'}`;
+  document.getElementById('tabReg').style.cssText   = `flex:1;padding:16px;background:none;border:none;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;color:${!isLogin?'var(--w5)':'var(--ink3)'};border-bottom:2px solid ${!isLogin?'var(--w3)':'transparent'}`;
+}
+
+async function doAuth(type) {
+  const errEl = document.getElementById('authErr');
+  errEl.textContent = '';
+  const authMsgs = {
+    'auth/user-not-found':'Хэрэглэгч олдсонгүй.',
+    'auth/wrong-password':'Нууц үг буруу байна.',
+    'auth/invalid-credential':'Имэйл эсвэл нууц үг буруу байна.',
+    'auth/email-already-in-use':'Энэ имэйл бүртгэлтэй байна.',
+    'auth/weak-password':'Нууц үг хэтэрхий богино (6+ тэмдэгт).',
+    'auth/invalid-email':'Имэйл буруу форматтай байна.'
+  };
+  try {
+    if (type === 'login') {
+      const email = document.getElementById('aEmail').value.trim();
+      const pwd   = document.getElementById('aPwd').value;
+      if (!email || !pwd) { errEl.textContent = 'Бүх талбарыг бөглөнө үү.'; return; }
+      await auth.signInWithEmailAndPassword(email, pwd);
+      closeAuthModal();
+      toast('Амжилттай нэвтэрлээ! 💙', 'success');
+    } else {
+      const name  = document.getElementById('aName').value.trim();
+      const email = document.getElementById('aRegEmail').value.trim();
+      const pwd   = document.getElementById('aRegPwd').value;
+      if (!email || !pwd) { errEl.textContent = 'Бүх талбарыг бөглөнө үү.'; return; }
+      const cred  = await auth.createUserWithEmailAndPassword(email, pwd);
+      if (name) await cred.user.updateProfile({ displayName: name });
+      await db.collection('users').doc(cred.user.uid).set({
+        email, displayName: name || null, role: 'user',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      closeAuthModal();
+      toast('Бүртгэл амжилттай үүслээ! 💙', 'success');
+    }
+  } catch(e) { errEl.textContent = authMsgs[e.code] || 'Алдаа гарлаа.'; }
+}
+
+// ── Newsletter ──
+document.querySelector('.s-sub button').addEventListener('click', async function() {
+  const input = document.querySelector('.s-sub input');
+  const email = input.value.trim();
+  if (!email || !email.includes('@')) { toast('Зөв имэйл оруулна уу.'); return; }
+  this.disabled = true;
+  try {
+    const exist = await db.collection('subscribers').where('email','==',email).get();
+    if (!exist.empty) { toast('Та аль хэдийн захиалсан байна! 💙'); this.disabled=false; return; }
+    await db.collection('subscribers').add({ email, subscribedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    toast('Амжилттай захиалагдлаа! 💙', 'success');
+    input.value = '';
+  } catch(e) { toast('Алдаа гарлаа.', 'error'); }
+  this.disabled = false;
+});
+
+// ── Letter form ──
+document.querySelector('.strip-letter .strip-btn').addEventListener('click', async function() {
+  const name    = document.querySelector('.ltr-field input').value.trim();
+  const topic   = document.querySelector('.ltr-field select').value;
+  const message = document.querySelector('.ltr-field textarea').value.trim();
+  if (!message) { toast('Захиа бичнэ үү.'); return; }
+  this.textContent = 'Илгээж байна...'; this.disabled = true;
+  try {
+    await db.collection('messages').add({
+      name: name || 'Нэргүй', isAnonymous: !name,
+      email: currentUser?.email || null,
+      topic, message, status: 'unread',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    toast('Захиа илгээгдлээ! Баярлалаа 💙', 'success');
+    document.querySelector('.ltr-field input').value = '';
+    document.querySelector('.ltr-field textarea').value = '';
+  } catch(e) { toast('Алдаа гарлаа.', 'error'); }
+  this.textContent = 'Илгээх 💙'; this.disabled = false;
+});
+
+// ── Appointment Modal ──
+function openApptModal() {
+  document.getElementById('apptModal').style.display = 'flex';
+  if (currentUser) {
+    if (currentUser.displayName) document.getElementById('apptName').value = currentUser.displayName;
+    document.getElementById('apptEmail').value = currentUser.email;
+  }
+}
+function closeApptModal() {
+  document.getElementById('apptModal').style.display = 'none';
+}
+document.getElementById('apptModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('apptModal')) closeApptModal();
+});
+
+function selectDur(btn) {
+  selectedDur   = btn.dataset.dur;
+  selectedPrice = btn.dataset.price;
+  document.querySelectorAll('.dur-btn').forEach(b => {
+    b.style.borderColor = 'var(--line)'; b.style.background = 'var(--bg)';
+  });
+  btn.style.borderColor = 'var(--w3)'; btn.style.background = 'var(--w1)';
+}
+
+// Wire all "Цаг захиалах" buttons
+document.querySelectorAll('.strip-btn').forEach(btn => {
+  if (btn.textContent.includes('Цаг захиалах')) btn.addEventListener('click', openApptModal);
+});
+document.querySelector('.s-btn')?.addEventListener('click', openApptModal);
+
+async function submitAppt() {
+  const name  = document.getElementById('apptName').value.trim();
+  const email = document.getElementById('apptEmail').value.trim();
+  const phone = document.getElementById('apptPhone').value.trim();
+  const type  = document.getElementById('apptType').value;
+  const msg   = document.getElementById('apptMsg').value.trim();
+  if (!name || !email) { toast('Нэр болон имэйлийг оруулна уу.'); return; }
+  const btn = document.getElementById('apptSubmitBtn');
+  btn.textContent = 'Илгээж байна...'; btn.disabled = true;
+  try {
+    await db.collection('appointments').add({
+      name, email, phone, type,
+      duration: selectedDur, price: selectedPrice,
+      message: msg, status: 'pending',
+      userId: currentUser?.uid || null,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    toast('Цаг амжилттай захиалагдлаа! 💙 Удахгүй холбогдно.', 'success');
+    closeApptModal();
+    ['apptName','apptEmail','apptPhone','apptMsg'].forEach(id => document.getElementById(id).value = '');
+  } catch(e) { toast('Алдаа гарлаа.', 'error'); }
+  btn.textContent = 'Цаг захиалах →'; btn.disabled = false;
+}
+
+// Paid content - mark cards
+document.querySelectorAll('.card').forEach(card => {
+  if (card.querySelector('.b-paid')) card.setAttribute('data-paid','true');
+});
+updatePaywall();
 </script>
 </body>
 </html>
